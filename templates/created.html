@@ -1,0 +1,10 @@
+{{define "title"}}MicroURL: URL Shortener {{ end }} {{define "main"}}
+<p class="mt-6">
+  Successfully created short url at
+  <a
+    class="text-cyan-600 hover:underline hover:text-cyan-700"
+    href="{{.ShortUrl}}"
+    >{{.ShortUrl}}</a
+  >
+</p>
+{{ end}}
