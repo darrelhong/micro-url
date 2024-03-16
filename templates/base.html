@@ -1,0 +1,12 @@
+{{define "base"}}
+<!DOCTYPE html>
+<html lang="en-SG">
+  <head>
+    {{template "head" .}}
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <main class="flex-1 container mx-auto px-4 py-2 {{block "main-extra-class" .}}{{end}}">{{template "main" .}}</main>
+    <footer class="container mx-auto pb-2 px-4">Made with Go + Turso</footer>
+  </body>
+</html>
+{{end}}
