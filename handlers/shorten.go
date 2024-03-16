@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/darrelhong/micro-url/store"
@@ -16,10 +17,21 @@ func HandleShorten(urlStore store.UrlStore) http.Handler {
 	tmpl := template.Must(template.ParseFiles("templates/base.html", "templates/created.html", "templates/partials/head.html"))
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		url := r.FormValue("url")
-		log.Println("URL to shorten:", url)
+		inputUrl := r.FormValue("url")
+		log.Println("URL to shorten:", inputUrl)
 
-		shortUrlId, err := urlStore.CreateShortLink(url)
+		if inputUrl == "" {
+			http.Error(w, "URL is required", http.StatusBadRequest)
+			return
+		}
+
+		_, err := url.ParseRequestURI(inputUrl)
+		if err != nil {
+			http.Error(w, "URL is not valid", http.StatusBadRequest)
+			return
+		}
+
+		shortUrlId, err := urlStore.CreateShortLink(inputUrl)
 
 		if err != nil {
 			http.Error(w, "Something went wrong", http.StatusInternalServerError)
