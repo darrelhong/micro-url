@@ -8,6 +8,7 @@ import (
 
 type UrlStore interface {
 	CreateShortLink(url string) (string, error)
+	GetOriginalUrl(shortURLId string) (string, error)
 }
 
 type DbUrlStore struct {
@@ -29,6 +30,25 @@ func (store *DbUrlStore) CreateShortLink(url string) (string, error) {
 	}
 
 	return shortURLId, nil
+}
+
+func (store *DbUrlStore) GetOriginalUrl(shortURLId string) (string, error) {
+	var originalUrl string
+
+	err := store.db.QueryRow("SELECT original_url FROM urls WHERE short_url_id = ?", shortURLId).Scan(&originalUrl)
+
+	if err == sql.ErrNoRows {
+		return "", nil
+	}
+
+	if err != nil {
+		log.Println("Error getting original URL from database:", err)
+
+		return "", err
+	}
+
+	return originalUrl, nil
+
 }
 
 const availableChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"

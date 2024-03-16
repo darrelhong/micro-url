@@ -17,5 +17,7 @@ func addRoutes(mux *http.ServeMux, urlStore store.UrlStore) {
 
 	mux.Handle("POST /shorten", handlers.HandleShorten(urlStore))
 
+	mux.Handle("GET /{shortUrlId}", handlers.HandleRedirect(urlStore))
+
 	mux.Handle("/static/", http.FileServer(http.FS(static)))
 }
