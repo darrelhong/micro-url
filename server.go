@@ -1,11 +1,15 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
 
-func NewServer() http.Handler {
+	"github.com/darrelhong/micro-url/store"
+)
+
+func NewServer(urlStore store.UrlStore) http.Handler {
 	mux := http.NewServeMux()
 
-	addRoutes(mux)
+	addRoutes(mux, urlStore)
 
 	var handler http.Handler = mux
 

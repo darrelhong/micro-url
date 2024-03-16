@@ -4,6 +4,7 @@ import (
 	"embed"
 
 	"github.com/darrelhong/micro-url/handlers"
+	"github.com/darrelhong/micro-url/store"
 
 	"net/http"
 )
@@ -11,10 +12,10 @@ import (
 //go:embed static
 var static embed.FS
 
-func addRoutes(mux *http.ServeMux) {
+func addRoutes(mux *http.ServeMux, urlStore store.UrlStore) {
 	mux.Handle("/", handlers.HandleIndex())
 
-	mux.Handle("POST /shorten", handlers.HandleShorten())
+	mux.Handle("POST /shorten", handlers.HandleShorten(urlStore))
 
 	mux.Handle("/static/", http.FileServer(http.FS(static)))
 }

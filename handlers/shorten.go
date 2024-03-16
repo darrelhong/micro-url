@@ -2,25 +2,23 @@ package handlers
 
 import (
 	"fmt"
-	"math/rand"
 	"net/http"
+
+	"github.com/darrelhong/micro-url/store"
 )
 
-func HandleShorten() http.Handler {
+func HandleShorten(urlStore store.UrlStore) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		url := r.FormValue("url")
 		fmt.Println("URL to shorten:", url)
-		shortURLId := generateShortId()
-		fmt.Println("Shortened URL ID:", shortURLId)
+
+		shortUrl, err := urlStore.CreateShortLink(url)
+
+		fmt.Println("Shortened URL", shortUrl)
+
+		if err != nil {
+			http.Error(w, "Something went wrong", http.StatusInternalServerError)
+			return
+		}
 	})
-}
-
-const availableChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
-func generateShortId() string {
-	result := make([]byte, 8)
-	for i := range result {
-		result[i] = availableChars[rand.Intn(len(availableChars))]
-	}
-	return string(result)
 }
