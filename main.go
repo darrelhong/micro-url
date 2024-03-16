@@ -9,6 +9,7 @@ import (
 
 	"github.com/darrelhong/micro-url/store"
 	"github.com/joho/godotenv"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 func main() {
@@ -21,6 +22,10 @@ func main() {
 	dbToken := os.Getenv("DB_TOKEN")
 
 	db, err := sql.Open("libsql", fmt.Sprintf("%s?authToken=%s", dbUrl, dbToken))
+
+	if err != nil {
+		log.Fatal("Error connecting to database: ", err)
+	}
 
 	srv := NewServer(store.NewDbUrlStore(db))
 

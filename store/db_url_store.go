@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	"fmt"
 	"math/rand"
 )
 
@@ -19,6 +20,13 @@ func NewDbUrlStore(db *sql.DB) *DbUrlStore {
 
 func (store *DbUrlStore) CreateShortLink(url string) (string, error) {
 	shortURLId := generateShortId()
+
+	_, err := store.db.Exec("INSERT INTO urls (original_url, short_url_id) VALUES (?, ?)", url, shortURLId)
+	if err != nil {
+		fmt.Println("Error inserting URL into database:", err)
+		return "", err
+	}
+
 	return shortURLId, nil
 }
 
