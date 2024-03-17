@@ -2,7 +2,7 @@
 
 Yet another URL shortener
 
-Live demo:
+Live demo: https://microurl-deploy.onrender.com
 
 ## Project Structure
 
