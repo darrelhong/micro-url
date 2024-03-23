@@ -7,12 +7,21 @@
   <body class="min-h-screen flex flex-col">
     <header class="container pt-2 px-4 mx-auto flex justify-between">
       <h2 class="text-2xl font-bold text-cyan-600">MicroURL</h2>
+      {{ if eq .Oauth2Url "" }}
+      <a 
+        class="inline-flex items-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-cyan-600 text-white shadow hover:bg-cyan-600/90 px-4"
+        href="/logout"
+      >
+        Logout
+      </a>
+      {{ else }}
       <a 
         class="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-cyan-600 text-white shadow hover:bg-cyan-600/90 px-4"
-        href="https://github.com/login/oauth/authorize?scope=user:email&client_id={{ .GhClientId }}&state={{ .State }}"
+        href="{{ .Oauth2Url }}"
       >
         Login
       </a>
+      {{ end }}
     </header>
     <main class="flex-1 container mx-auto px-4 {{block "main-extra-class" .}}{{end}}">{{template "main" .}}</main>
     <footer class="container mx-auto pb-2 px-4">

@@ -5,12 +5,13 @@ import (
 
 	"github.com/darrelhong/micro-url/store"
 	"github.com/gorilla/sessions"
+	"golang.org/x/oauth2"
 )
 
-func NewServer(urlStore store.UrlStore, ghClientId string, sessionStore *sessions.CookieStore) http.Handler {
+func NewServer(urlStore store.UrlStore, oauth2Conf *oauth2.Config, sessionStore *sessions.CookieStore) http.Handler {
 	mux := http.NewServeMux()
 
-	addRoutes(mux, urlStore, ghClientId, sessionStore)
+	addRoutes(mux, urlStore, oauth2Conf, sessionStore)
 
 	var handler http.Handler = mux
 

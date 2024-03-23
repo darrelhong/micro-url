@@ -7,9 +7,10 @@ import (
 	"net/http"
 
 	"github.com/gorilla/sessions"
+	"golang.org/x/oauth2"
 )
 
-func HandleIndex(ghClientId string, sessionStore *sessions.CookieStore) http.Handler {
+func HandleIndex(oauth2Conf *oauth2.Config, sessionStore *sessions.CookieStore) http.Handler {
 	tmpl := template.Must(template.ParseFiles("templates/base.html", "templates/index.html", "templates/partials/head.html"))
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -17,29 +18,43 @@ func HandleIndex(ghClientId string, sessionStore *sessions.CookieStore) http.Han
 		_, err := rand.Read(b)
 		if err != nil {
 			http.Error(w, "Something went wrong, please try again", http.StatusInternalServerError)
+			return
 		}
 
 		state := base64.StdEncoding.EncodeToString(b)
 
-		session, err := sessionStore.Get(r, "state")
+		loginSession, err := sessionStore.Get(r, "login")
 
 		if err != nil {
 			http.Error(w, "Something went wrong, please try again", http.StatusInternalServerError)
+			return
 		}
 
-		session.Values["state"] = state
-		session.Save(r, w)
+		var oauth2Url string
+
+		if loginSession.Values["email"] == nil {
+			oauth2Url = oauth2Conf.AuthCodeURL(state)
+
+			session, err := sessionStore.Get(r, "state")
+
+			if err != nil {
+				http.Error(w, "Something went wrong, please try again", http.StatusInternalServerError)
+				return
+			}
+
+			session.Values["state"] = state
+			session.Save(r, w)
+		}
 
 		err = tmpl.ExecuteTemplate(w, "base", struct {
-			GhClientId string
-			State      string
+			Oauth2Url string
 		}{
-			GhClientId: ghClientId,
-			State:      state,
+			Oauth2Url: oauth2Url,
 		})
 
 		if err != nil {
 			http.Error(w, "Something went wrong, please try again", http.StatusInternalServerError)
+			return
 		}
 	})
 }
