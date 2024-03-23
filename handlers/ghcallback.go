@@ -7,11 +7,16 @@ import (
 	"net/http"
 
 	"github.com/darrelhong/micro-url/store"
+	"github.com/darrelhong/micro-url/utils"
 	"github.com/gorilla/sessions"
 	"golang.org/x/oauth2"
 )
 
-func HandleGhCallback(oauth2Conf *oauth2.Config, sessionStore *sessions.CookieStore, userStore store.UserStore) http.Handler {
+func HandleGhCallback(oauth2Conf *oauth2.Config,
+	sessionStore *sessions.CookieStore,
+	userStore store.UserStore,
+	tursoApiClient *utils.TursoApiClient,
+) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// get code and state from query params
 		code := r.URL.Query().Get("code")
@@ -35,9 +40,9 @@ func HandleGhCallback(oauth2Conf *oauth2.Config, sessionStore *sessions.CookieSt
 			return
 		}
 
-		client := oauth2Conf.Client(r.Context(), tok)
+		oauthClient := oauth2Conf.Client(r.Context(), tok)
 
-		resp, err := client.Get("https://api.github.com/user/emails")
+		resp, err := oauthClient.Get("https://api.github.com/user/emails")
 
 		if err != nil {
 			http.Error(w, "Something went wrong, please try again", http.StatusInternalServerError)
@@ -91,7 +96,21 @@ func HandleGhCallback(oauth2Conf *oauth2.Config, sessionStore *sessions.CookieSt
 		_, err = userStore.GetUser(primaryEmail)
 
 		if err == store.ErrUserNotFound {
-			log.Println("User not found, creating new user")
+			log.Println("User not found, creating new user and database")
+
+			dbUrl, err := tursoApiClient.CreateTenantDatabaseAndRunMigrations(primaryEmail)
+
+			if err != nil {
+				http.Error(w, "Something went wrong", http.StatusInternalServerError)
+				return
+			}
+
+			err = userStore.CreateUser(primaryEmail, dbUrl)
+
+			if err != nil {
+				http.Error(w, "Something went wrong", http.StatusInternalServerError)
+				return
+			}
 		}
 
 		if err != nil && err != store.ErrUserNotFound {

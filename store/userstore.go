@@ -3,6 +3,7 @@ package store
 import (
 	"database/sql"
 	"errors"
+	"log"
 )
 
 type User struct {
@@ -13,6 +14,7 @@ type User struct {
 
 type UserStore interface {
 	GetUser(email string) (User, error)
+	CreateUser(email string, dbUrl string) error
 }
 
 type DbUserStore struct {
@@ -39,4 +41,15 @@ func (store *DbUserStore) GetUser(email string) (User, error) {
 	}
 
 	return user, nil
+}
+
+func (store *DbUserStore) CreateUser(email string, dbUrl string) error {
+	_, err := store.db.Exec("INSERT INTO users (email, db_url) VALUES (?, ?)", email, dbUrl)
+
+	if err != nil {
+		log.Println("oh no error inserting new userrr", err)
+		return err
+	}
+
+	return nil
 }

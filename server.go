@@ -4,14 +4,21 @@ import (
 	"net/http"
 
 	"github.com/darrelhong/micro-url/store"
+	"github.com/darrelhong/micro-url/utils"
 	"github.com/gorilla/sessions"
 	"golang.org/x/oauth2"
 )
 
-func NewServer(urlStore store.UrlStore, oauth2Conf *oauth2.Config, sessionStore *sessions.CookieStore, userStore store.UserStore) http.Handler {
+func NewServer(
+	urlStore store.UrlStore,
+	oauth2Conf *oauth2.Config,
+	sessionStore *sessions.CookieStore,
+	userStore store.UserStore,
+	tursoApiClient *utils.TursoApiClient,
+) http.Handler {
 	mux := http.NewServeMux()
 
-	addRoutes(mux, urlStore, oauth2Conf, sessionStore, userStore)
+	addRoutes(mux, urlStore, oauth2Conf, sessionStore, userStore, tursoApiClient)
 
 	var handler http.Handler = mux
 

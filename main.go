@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/darrelhong/micro-url/store"
+	"github.com/darrelhong/micro-url/utils"
 	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
@@ -43,7 +44,13 @@ func main() {
 	urlStore := store.NewDbUrlStore(db)
 	userStore := store.NewDbUserStore(db)
 
-	srv := NewServer(urlStore, oauth2Conf, sessionStore, userStore)
+	tursoApiUrl := os.Getenv("TURSO_API_URL")
+	tursoOrgName := os.Getenv("TURSO_ORG_NAME")
+	tursoApiToken := os.Getenv("TURSO_API_TOKEN")
+
+	tursoApiClient := utils.NewTursoApiClient(tursoApiUrl, tursoOrgName, tursoApiToken, dbToken)
+
+	srv := NewServer(urlStore, oauth2Conf, sessionStore, userStore, tursoApiClient)
 
 	log.Fatal(http.ListenAndServe(":8080", srv))
 }

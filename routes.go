@@ -5,6 +5,7 @@ import (
 
 	"github.com/darrelhong/micro-url/handlers"
 	"github.com/darrelhong/micro-url/store"
+	"github.com/darrelhong/micro-url/utils"
 	"github.com/gorilla/sessions"
 	"golang.org/x/oauth2"
 
@@ -14,10 +15,17 @@ import (
 //go:embed static
 var static embed.FS
 
-func addRoutes(mux *http.ServeMux, urlStore store.UrlStore, oauth2Conf *oauth2.Config, sessionStore *sessions.CookieStore, userStore store.UserStore) {
-	mux.Handle("/", handlers.HandleIndex(oauth2Conf, sessionStore))
+func addRoutes(mux *http.ServeMux,
+	urlStore store.UrlStore,
+	oauth2Conf *oauth2.Config,
+	sessionStore *sessions.CookieStore,
+	userStore store.UserStore,
+	tursoApiClient *utils.TursoApiClient,
+) {
+	mux.Handle("/",
+		handlers.HandleIndex(oauth2Conf, sessionStore))
 
-	mux.Handle("GET /github/callback", handlers.HandleGhCallback(oauth2Conf, sessionStore, userStore))
+	mux.Handle("GET /github/callback", handlers.HandleGhCallback(oauth2Conf, sessionStore, userStore, tursoApiClient))
 
 	mux.Handle("POST /shorten", handlers.HandleShorten(urlStore))
 
