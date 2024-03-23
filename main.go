@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/darrelhong/micro-url/store"
+	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
@@ -18,6 +19,8 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
+	sessionStore := sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
+
 	dbUrl := os.Getenv("DB_URL")
 	dbToken := os.Getenv("DB_TOKEN")
 
@@ -27,7 +30,7 @@ func main() {
 		log.Fatal("Error connecting to database: ", err)
 	}
 
-	srv := NewServer(store.NewDbUrlStore(db), os.Getenv("GH_CLIENT_ID"))
+	srv := NewServer(store.NewDbUrlStore(db), os.Getenv("GH_CLIENT_ID"), sessionStore)
 
 	log.Fatal(http.ListenAndServe(":8080", srv))
 }
