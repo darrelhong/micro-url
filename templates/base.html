@@ -5,7 +5,7 @@
     {{template "head" .}}
   </head>
   <body class="min-h-screen flex flex-col">
-    <header class="container pt-2 px-4 mx-auto flex justify-between">
+    <header class="container pt-2 px-4 mx-auto flex gap-2 justify-between">
       <h2 class="text-2xl font-bold text-cyan-600">MicroURL</h2>
       {{ if eq .Oauth2Url "" }}
       <a 
@@ -16,10 +16,10 @@
       </a>
       {{ else }}
       <a 
-        class="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-cyan-600 text-white shadow hover:bg-cyan-600/90 px-4"
+        class="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-cyan-600 text-white shadow hover:bg-cyan-600/90 px-4"
         href="{{ .Oauth2Url }}"
       >
-        Login
+        Login with GitHub
       </a>
       {{ end }}
     </header>
