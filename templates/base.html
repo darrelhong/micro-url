@@ -5,7 +5,15 @@
     {{template "head" .}}
   </head>
   <body class="min-h-screen flex flex-col">
-    <header class="container pt-2 px-4 mx-auto text-2xl font-bold text-cyan-600">MicroURL</header>
+    <header class="container pt-2 px-4 mx-auto flex justify-between">
+      <h2 class="text-2xl font-bold text-cyan-600">MicroURL</h2>
+      <a 
+        class="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-cyan-600 text-white shadow hover:bg-cyan-600/90 px-4"
+        href="https://github.com/login/oauth/authorize?scope=user:email&client_id={{ .GhClientId }}"
+      >
+        Login
+      </a>
+    </header>
     <main class="flex-1 container mx-auto px-4 {{block "main-extra-class" .}}{{end}}">{{template "main" .}}</main>
     <footer class="container mx-auto pb-2 px-4">
       <a class="inline-flex items-center gap-2" href="https://github.com/darrelhong/micro-url" target="_blank">

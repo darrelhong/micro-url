@@ -12,8 +12,8 @@ import (
 //go:embed static
 var static embed.FS
 
-func addRoutes(mux *http.ServeMux, urlStore store.UrlStore) {
-	mux.Handle("/", handlers.HandleIndex())
+func addRoutes(mux *http.ServeMux, urlStore store.UrlStore, ghClientId string) {
+	mux.Handle("/", handlers.HandleIndex(ghClientId))
 
 	mux.Handle("POST /shorten", handlers.HandleShorten(urlStore))
 

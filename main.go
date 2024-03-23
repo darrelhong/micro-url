@@ -27,7 +27,7 @@ func main() {
 		log.Fatal("Error connecting to database: ", err)
 	}
 
-	srv := NewServer(store.NewDbUrlStore(db))
+	srv := NewServer(store.NewDbUrlStore(db), os.Getenv("GH_CLIENT_ID"))
 
 	log.Fatal(http.ListenAndServe(":8080", srv))
 }
