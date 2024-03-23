@@ -8,10 +8,10 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func NewServer(urlStore store.UrlStore, oauth2Conf *oauth2.Config, sessionStore *sessions.CookieStore) http.Handler {
+func NewServer(urlStore store.UrlStore, oauth2Conf *oauth2.Config, sessionStore *sessions.CookieStore, userStore store.UserStore) http.Handler {
 	mux := http.NewServeMux()
 
-	addRoutes(mux, urlStore, oauth2Conf, sessionStore)
+	addRoutes(mux, urlStore, oauth2Conf, sessionStore, userStore)
 
 	var handler http.Handler = mux
 

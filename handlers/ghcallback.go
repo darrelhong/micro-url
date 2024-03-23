@@ -3,13 +3,15 @@ package handlers
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 
+	"github.com/darrelhong/micro-url/store"
 	"github.com/gorilla/sessions"
 	"golang.org/x/oauth2"
 )
 
-func HandleGhCallback(oauth2Conf *oauth2.Config, sessionStore *sessions.CookieStore) http.Handler {
+func HandleGhCallback(oauth2Conf *oauth2.Config, sessionStore *sessions.CookieStore, userStore store.UserStore) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// get code and state from query params
 		code := r.URL.Query().Get("code")
@@ -68,7 +70,9 @@ func HandleGhCallback(oauth2Conf *oauth2.Config, sessionStore *sessions.CookieSt
 			return
 		}
 
-		if !emails[0].Verified {
+		primaryEmailStruct := emails[0]
+
+		if !primaryEmailStruct.Verified {
 			http.Error(w, "Email not verified with GitHub", http.StatusBadRequest)
 			return
 		}
@@ -79,8 +83,21 @@ func HandleGhCallback(oauth2Conf *oauth2.Config, sessionStore *sessions.CookieSt
 			return
 		}
 
-		session.Values["email"] = emails[0].Email
+		primaryEmail := primaryEmailStruct.Email
+
+		session.Values["email"] = primaryEmail
 		session.Save(r, w)
+
+		_, err = userStore.GetUser(primaryEmail)
+
+		if err == store.ErrUserNotFound {
+			log.Println("User not found, creating new user")
+		}
+
+		if err != nil && err != store.ErrUserNotFound {
+			http.Error(w, "Something went wrong", http.StatusInternalServerError)
+			return
+		}
 
 		http.Redirect(w, r, "/", http.StatusFound)
 	})

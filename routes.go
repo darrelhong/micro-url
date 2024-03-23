@@ -14,10 +14,10 @@ import (
 //go:embed static
 var static embed.FS
 
-func addRoutes(mux *http.ServeMux, urlStore store.UrlStore, oauth2Conf *oauth2.Config, sessionStore *sessions.CookieStore) {
+func addRoutes(mux *http.ServeMux, urlStore store.UrlStore, oauth2Conf *oauth2.Config, sessionStore *sessions.CookieStore, userStore store.UserStore) {
 	mux.Handle("/", handlers.HandleIndex(oauth2Conf, sessionStore))
 
-	mux.Handle("GET /github/callback", handlers.HandleGhCallback(oauth2Conf, sessionStore))
+	mux.Handle("GET /github/callback", handlers.HandleGhCallback(oauth2Conf, sessionStore, userStore))
 
 	mux.Handle("POST /shorten", handlers.HandleShorten(urlStore))
 

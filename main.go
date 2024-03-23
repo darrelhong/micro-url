@@ -40,7 +40,10 @@ func main() {
 		log.Fatal("Error connecting to database: ", err)
 	}
 
-	srv := NewServer(store.NewDbUrlStore(db), oauth2Conf, sessionStore)
+	urlStore := store.NewDbUrlStore(db)
+	userStore := store.NewDbUserStore(db)
+
+	srv := NewServer(urlStore, oauth2Conf, sessionStore, userStore)
 
 	log.Fatal(http.ListenAndServe(":8080", srv))
 }
