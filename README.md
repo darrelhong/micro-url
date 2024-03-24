@@ -1,8 +1,12 @@
 # MicroURL
 
-Yet another URL shortener
+Yet another URL shortener, but with a twist
+
+Login with GitHub to get you very own database
 
 Live demo: https://microurl-deploy.onrender.com
+
+All short URLs will be stored in your tenant database
 
 ## Project Structure
 
