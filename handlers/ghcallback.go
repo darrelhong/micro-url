@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"html/template"
 	"io"
 	"log"
 	"net/http"
@@ -17,6 +18,9 @@ func HandleGhCallback(oauth2Conf *oauth2.Config,
 	userStore store.UserStore,
 	tursoApiClient *utils.TursoApiClient,
 ) http.Handler {
+	creatingUserTmpl := template.Must(template.ParseFiles("templates/partials/creating_user.html"))
+	redirectIndexTmpl := template.Must(template.ParseFiles("templates/partials/redirect_index.html"))
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// get code and state from query params
 		code := r.URL.Query().Get("code")
@@ -98,19 +102,27 @@ func HandleGhCallback(oauth2Conf *oauth2.Config,
 		if err == store.ErrUserNotFound {
 			log.Println("User not found, creating new user and database")
 
+			creatingUserTmpl.Execute(w, nil)
+			w.(http.Flusher).Flush()
+
 			dbUrl, err := tursoApiClient.CreateTenantDatabaseAndRunMigrations(primaryEmail)
 
 			if err != nil {
-				http.Error(w, "Something went wrong", http.StatusInternalServerError)
+				log.Println("gg error creating databse or running migration", err)
+				redirectIndexTmpl.Execute(w, nil)
 				return
 			}
 
 			err = userStore.CreateUser(primaryEmail, dbUrl)
 
 			if err != nil {
-				http.Error(w, "Something went wrong", http.StatusInternalServerError)
+				log.Println("gg error creating user", err)
+				redirectIndexTmpl.Execute(w, nil)
 				return
 			}
+
+			redirectIndexTmpl.Execute(w, nil)
+			return
 		}
 
 		if err != nil && err != store.ErrUserNotFound {
