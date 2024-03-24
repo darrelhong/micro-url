@@ -18,4 +18,23 @@
     Get short URL
   </button>
 </form>
-{{ end }}
+
+<div class="mt-20">
+  {{ if eq .Oauth2Url "" }}
+  <a
+    class="inline-flex items-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-cyan-600 text-white shadow hover:bg-cyan-600/90 px-3 py-1"
+    href="/logout"
+  >
+    Logout
+  </a>
+  {{ else }}
+  <p class="mb-2 font-medium">Get your own database</p>
+
+  <a
+    class="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-cyan-600 text-white shadow hover:bg-cyan-600/90 px-3 py-1"
+    href="{{ .Oauth2Url }}"
+  >
+    Login with GitHub
+  </a>
+</div>
+{{ end }} {{ end }}
