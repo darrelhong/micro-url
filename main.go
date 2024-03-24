@@ -50,7 +50,9 @@ func main() {
 
 	tursoApiClient := utils.NewTursoApiClient(tursoApiUrl, tursoOrgName, tursoApiToken, dbToken)
 
-	srv := NewServer(urlStore, oauth2Conf, sessionStore, userStore, tursoApiClient)
+	userDbClient := utils.NewUserDbClient(dbToken)
+
+	srv := NewServer(urlStore, oauth2Conf, sessionStore, userStore, tursoApiClient, userDbClient)
 
 	log.Fatal(http.ListenAndServe(":8080", srv))
 }

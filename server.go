@@ -15,10 +15,11 @@ func NewServer(
 	sessionStore *sessions.CookieStore,
 	userStore store.UserStore,
 	tursoApiClient *utils.TursoApiClient,
+	userDbClient *utils.UserDbClient,
 ) http.Handler {
 	mux := http.NewServeMux()
 
-	addRoutes(mux, urlStore, oauth2Conf, sessionStore, userStore, tursoApiClient)
+	addRoutes(mux, urlStore, oauth2Conf, sessionStore, userStore, tursoApiClient, userDbClient)
 
 	var handler http.Handler = mux
 

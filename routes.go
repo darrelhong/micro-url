@@ -21,6 +21,7 @@ func addRoutes(mux *http.ServeMux,
 	sessionStore *sessions.CookieStore,
 	userStore store.UserStore,
 	tursoApiClient *utils.TursoApiClient,
+	userDbClient *utils.UserDbClient,
 ) {
 	mux.Handle("/",
 		handlers.HandleIndex(oauth2Conf, sessionStore))
@@ -29,7 +30,7 @@ func addRoutes(mux *http.ServeMux,
 
 	mux.Handle("GET /logout", handlers.HandleLogout(sessionStore))
 
-	mux.Handle("POST /shorten", handlers.HandleShorten(urlStore))
+	mux.Handle("POST /shorten", handlers.HandleShorten(urlStore, sessionStore, userStore, userDbClient))
 
 	mux.Handle("GET /{shortUrlId}", handlers.HandleRedirect(urlStore))
 
