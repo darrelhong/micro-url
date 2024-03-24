@@ -27,6 +27,8 @@ func addRoutes(mux *http.ServeMux,
 
 	mux.Handle("GET /github/callback", handlers.HandleGhCallback(oauth2Conf, sessionStore, userStore, tursoApiClient))
 
+	mux.Handle("GET /logout", handlers.HandleLogout(sessionStore))
+
 	mux.Handle("POST /shorten", handlers.HandleShorten(urlStore))
 
 	mux.Handle("GET /{shortUrlId}", handlers.HandleRedirect(urlStore))
