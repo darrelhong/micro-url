@@ -8,4 +8,8 @@
     >{{.ShortUrl}}</a
   >
 </p>
+
+{{ if .IsUserDb }}
+<p class="mt-6">This short url is stored in your tenant database.</p>
+{{end}}
 {{ end}}

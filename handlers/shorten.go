@@ -40,6 +40,7 @@ func HandleShorten(
 		}
 
 		var shortUrlId string
+		isUserDb := false
 
 		loginSession, err := sessionStore.Get(r, "login")
 
@@ -71,6 +72,8 @@ func HandleShorten(
 				http.Error(w, "Something went wrong", http.StatusInternalServerError)
 				return
 			}
+
+			isUserDb = true
 		} else {
 			shortUrlId, err = urlStore.CreateShortLink(urlToShorten)
 		}
@@ -84,8 +87,10 @@ func HandleShorten(
 
 		tmpl.ExecuteTemplate(w, "base", struct {
 			ShortUrl string
+			IsUserDb bool
 		}{
 			ShortUrl: fmt.Sprintf("%s/%s", domainName, shortUrlId),
+			IsUserDb: isUserDb,
 		})
 	})
 }
