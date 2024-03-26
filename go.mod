@@ -7,6 +7,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240220085343-4ae0eb9d0898
 	golang.org/x/oauth2 v0.18.0
+	golang.org/x/sync v0.6.0
 )
 
 require (
