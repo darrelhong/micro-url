@@ -14,7 +14,6 @@ import (
 	"github.com/darrelhong/micro-url/store"
 	"github.com/darrelhong/micro-url/utils"
 	"github.com/gorilla/sessions"
-	"github.com/joho/godotenv"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
@@ -25,10 +24,6 @@ func run(ctx context.Context) error {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	oauth2Conf := &oauth2.Config{
 		ClientID:     os.Getenv("GH_CLIENT_ID"),
