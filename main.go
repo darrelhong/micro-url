@@ -25,10 +25,7 @@ func run(ctx context.Context) error {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	godotenv.Load()
 
 	oauth2Conf := &oauth2.Config{
 		ClientID:     os.Getenv("GH_CLIENT_ID"),
