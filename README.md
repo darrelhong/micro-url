@@ -4,7 +4,7 @@ Yet another URL shortener, but with a twist
 
 Login with GitHub to get you very own database
 
-Live demo: https://microurl-deploy.onrender.com
+Live demo: See above 
 
 All short URLs will be stored in your tenant database
 
